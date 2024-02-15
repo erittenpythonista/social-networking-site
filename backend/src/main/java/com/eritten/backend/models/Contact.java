@@ -17,5 +17,28 @@ public class Contact {
     @JoinColumn(name = "contact_user_id")
     private User contactUser;
 
-    // Getters and setters
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public User getUser() {
+        return user;
+    }
+
+    public void setUser(User user) {
+        this.user = user;
+    }
+
+    public User getContactUser() {
+        return contactUser;
+    }
+
+    public void setContactUser(User contactUser) {
+        this.contactUser = contactUser;
+    }
+
 }

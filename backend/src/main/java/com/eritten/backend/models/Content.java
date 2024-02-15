@@ -23,5 +23,5 @@ public class Content {
     @Lob
     private byte[] contentData;
 
-    // Getters and setters
+
 }

@@ -20,5 +20,4 @@ public class Invitation {
     @Enumerated(EnumType.STRING)
     private InvitationStatus status;
 
-    // Getters and setters
 }

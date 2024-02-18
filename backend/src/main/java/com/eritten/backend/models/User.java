@@ -42,11 +42,12 @@ public class User implements UserDetails {
     }
 
     public void setUsername(String username) {
-        this.username = username;
+        this.username = email;
     }
 
     public void setEmail(String email) {
         this.email = email;
+
     }
 
     public void setPassword(String password) {

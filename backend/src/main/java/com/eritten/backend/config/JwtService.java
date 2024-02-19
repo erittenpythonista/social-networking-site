@@ -14,7 +14,13 @@ import io.jsonwebtoken.Jwts;
 import io.jsonwebtoken.SignatureAlgorithm;
 import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 @Service
 public class JwtService {
     @Value("${jwt.secret}")
@@ -61,7 +67,7 @@ public class JwtService {
     }
 
     public String generateToken(UserDetails userDetails) {
-        return generateToken(new HashMap(), userDetails);
+        return generateToken(new HashMap<>(), userDetails);
     }
 
     public boolean isTokenValid(String token, UserDetails userDetails) {

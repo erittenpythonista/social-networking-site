@@ -14,6 +14,11 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 
 import com.eritten.backend.repositories.UserRepository;
 
+import lombok.Builder;
+import lombok.Data;
+
+@Data
+@Builder
 @Configuration
 public class ApplicationConfig {
 

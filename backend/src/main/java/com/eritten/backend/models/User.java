@@ -4,78 +4,44 @@ import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 
 import jakarta.persistence.*;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+
 import java.util.Collection;
 import java.util.List;
 
+@Data
+@Builder
+@NoArgsConstructor
+@AllArgsConstructor
 @Entity
 @Table(name = "CustomUser")
 public class User implements UserDetails {
 
     @Id
     @GeneratedValue
-    private Long id;
+    private int id;
 
     @Column(nullable = false)
     private String fullName;
-
-    @Column(nullable = false, unique = true)
-    private String username;
 
     @Column(nullable = false, unique = true)
     private String email;
 
     @Column(nullable = false)
     private String password;
-
+    @Column(nullable = true)
     private String profilePicture;
 
-    public Long getId() {
-        return id;
-    }
+    @Column(nullable = true)
+    @Enumerated(EnumType.STRING)
+    private Role role;
 
-    public String getFullName() {
-        return fullName;
-    }
-
-    public void setFullName(String fullName) {
-        this.fullName = fullName;
-    }
-
-    public void setUsername(String username) {
-        this.username = email;
-    }
-
-    public void setEmail(String email) {
-        this.email = email;
-
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public String getProfilePicture() {
-        return profilePicture;
-    }
-
-    public void setProfilePicture(String profilePicture) {
-        this.profilePicture = profilePicture;
-    }
-
-    public List<Blacklist> getBlacklist() {
-        return blacklist;
-    }
-
-    public void setBlacklist(List<Blacklist> blacklist) {
-        this.blacklist = blacklist;
-    }
-
-    public List<Contact> getContacts() {
-        return contacts;
-    }
-
-    public void setContacts(List<Contact> contacts) {
-        this.contacts = contacts;
+    @Override
+    public String getPassword() {
+        return password;
     }
 
     // Relationships
@@ -91,11 +57,6 @@ public class User implements UserDetails {
     public Collection<? extends GrantedAuthority> getAuthorities() {
         // Return authorities/roles assigned to the user (if needed)
         return null;
-    }
-
-    @Override
-    public String getPassword() {
-        return this.password;
     }
 
     @Override

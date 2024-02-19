@@ -1,4 +1,4 @@
-package com.eritten.backend.controllers;
+package com.eritten.backend.auth;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
 

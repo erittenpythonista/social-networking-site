@@ -1,7 +1,7 @@
-package com.eritten.backend.controllers;
+package com.eritten.backend.auth;
 
-import org.apache.catalina.connector.Request;
 import org.springframework.security.authentication.AuthenticationManager;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -31,8 +31,15 @@ public class AuthenticationService {
                 .build();
     }
 
-    public AuthenticationResponse authenticate(Request request) {
-
+    public AuthenticationResponse authenticate(AuthenticationRequest request) {
+        authenticationManager
+                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(), request.getPassword()));
+        var user = repository.findByEmail(request.getEmail())
+                .orElseThrow();
+        var jwtToken = jwtService.generateToken(user);
+        return AuthenticationResponse.builder()
+                .accessToken(jwtToken)
+                .build();
     }
 
 }

@@ -1,4 +1,4 @@
-package com.eritten.backend.controllers;
+package com.eritten.backend.auth;
 
 import lombok.AllArgsConstructor;
 import lombok.Builder;

@@ -15,7 +15,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private static final String[] openRoutes = { "/signup", "/login" };
+    private static final String[] openRoutes = { "/users/signup", "/users/login" };
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;

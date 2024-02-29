@@ -7,9 +7,11 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import lombok.RequiredArgsConstructor;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 
 @RestController
-@RequestMapping("/users")
+@RequestMapping("/api/users")
 @RequiredArgsConstructor
 public class AuthenticationController {
     private final AuthenticationService service;
@@ -25,4 +27,15 @@ public class AuthenticationController {
             @RequestBody AuthenticationRequest request) {
         return ResponseEntity.ok(service.authenticate(request));
     }
+
+    @PostMapping("/change-password")
+    public ResponseEntity<ChangePasswordResponse> changePassword(@RequestBody ChangePasswordRequest request) {
+        return ResponseEntity.ok(service.changePassword(request));
+    }
+
+    @PostMapping("/change-email")
+    public ResponseEntity<ChangeEmailResponse> changeEmail(@RequestBody ChangeEmailRequest request) {
+        return ResponseEntity.ok(service.changeEmail(request));
+    }
+
 }

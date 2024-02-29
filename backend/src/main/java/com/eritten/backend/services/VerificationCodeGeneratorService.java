@@ -13,7 +13,7 @@ import org.springframework.stereotype.Service;
 @Service
 public class VerificationCodeGeneratorService {
 
-    public static String generateRandomCode(int length) {
+    public String generateRandomCode(int length) {
         SecureRandom secureRandom;
         try {
             secureRandom = SecureRandom.getInstanceStrong(); // Use a cryptographically strong random number generator

@@ -38,7 +38,9 @@ public class User implements UserDetails {
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private Role role;
+    @Column(columnDefinition = "BIT DEFAULT false")
     private boolean isVerified;
+    private String verificationCode;
 
     @Override
     public String getPassword() {

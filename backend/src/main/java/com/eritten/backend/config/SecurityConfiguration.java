@@ -1,6 +1,6 @@
 package com.eritten.backend.config;
 
-import static org.springframework.security.config.http.SessionCreationPolicy.STATELESS;
+import static org.springframework.security.config.http.SessionCreationPolicy.*;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -15,7 +15,8 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 @Configuration
 @EnableWebSecurity
 public class SecurityConfiguration {
-    private static final String[] openRoutes = { "/api/users/register", "/api/users/authenticate", "/error" };
+    private static final String[] openRoutes = { "/api/users/register", "/api/users/authenticate", "/error",
+            "/verify-code" };
 
     @Autowired
     private JwtAuthenticationFilter jwtAuthenticationFilter;

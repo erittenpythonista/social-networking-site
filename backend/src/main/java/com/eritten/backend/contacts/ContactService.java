@@ -23,4 +23,26 @@ public class ContactService {
         // Return the contacts associated with the user
         return user.getContacts();
     }
+
+    public AddContactResponse addContact(AddContactRequest request) {
+        // Find the user by email
+        User user = userRepository.findByEmail(request.getUserEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Find the contact user by email
+        User contactUser = userRepository.findByEmail(request.getContactEmail())
+                .orElseThrow(() -> new RuntimeException("Contact user not found"));
+
+        // Create a new contact
+        Contact contact = new Contact();
+        contact.setUser(user);
+        contact.setContactUser(contactUser);
+
+        // Add the contact to the user's contact list
+        user.getContacts().add(contact);
+
+        // Save the user to update the contact list
+        userRepository.save(user);
+        return new AddContactResponse("Contact added successfully");
+    }
 }

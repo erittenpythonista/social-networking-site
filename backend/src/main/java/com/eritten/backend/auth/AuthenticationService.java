@@ -4,7 +4,6 @@ import java.io.File;
 import java.io.IOException;
 import java.util.Optional;
 
-import lombok.Data;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -21,8 +20,7 @@ import com.eritten.backend.repositories.UserRepository;
 import com.eritten.backend.services.MailService;
 import com.eritten.backend.services.VerificationCodeGeneratorService;
 
-import lombok.AllArgsConstructor;
-import lombok.RequiredArgsConstructor;
+import lombok.Data;
 
 @Data
 @Service
@@ -184,4 +182,31 @@ public class AuthenticationService {
                                         "User with email " + email + " not found");
                 }
         }
+
+        public AccountVerificationResponse accountVerification(AccountVerificationRequest request) {
+                // Find the user by email
+                Optional<User> userOptional = repository.findByEmail(request.getEmail());
+
+                // Check if the user exists
+                if (userOptional.isPresent()) {
+                        User user = userOptional.get();
+
+                        // Check if the verification code matches
+                        if (user.getVerificationCode().equals(request.getCode())) {
+                                // Code matches, user is verified
+                                user.setVerified(true);
+                                user.setVerificationCode(null); // Delete the verification code
+                                repository.save(user);
+
+                                return new AccountVerificationResponse("Account verified successfully");
+                        } else {
+                                // Code does not match
+                                return new AccountVerificationResponse("Invalid verification code");
+                        }
+                } else {
+                        // User not found
+                        throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
+                }
+        }
+
 }

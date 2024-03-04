@@ -1,13 +1,19 @@
 package com.eritten.backend.auth;
 
+import java.io.File;
+import java.io.IOException;
 import java.util.Optional;
 
+import lombok.Data;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.server.ResponseStatusException;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import com.eritten.backend.config.JwtService;
 import com.eritten.backend.models.User;
@@ -16,8 +22,9 @@ import com.eritten.backend.services.MailService;
 import com.eritten.backend.services.VerificationCodeGeneratorService;
 
 import lombok.AllArgsConstructor;
+import lombok.RequiredArgsConstructor;
 
-@AllArgsConstructor
+@Data
 @Service
 public class AuthenticationService {
         private final UserRepository repository;
@@ -26,6 +33,9 @@ public class AuthenticationService {
         private final AuthenticationManager authenticationManager;
         private final VerificationCodeGeneratorService verificationCodeGeneratorService;
         private final MailService mailService;
+
+        @Value("${upload-dir}")
+        private String uploadDir;
 
         public AuthenticationResponse register(RegisterRequest request) {
                 final String verificationCode = verificationCodeGeneratorService.generateRandomCode(6);
@@ -53,7 +63,8 @@ public class AuthenticationService {
                                 .password(passwordEncoder.encode(request.getPassword()))
                                 .verificationCode(verificationCode)
                                 .build();
-                var savedUser = repository.save(user);
+                repository.save(user);
+
                 mailService.sendEmail(request.getEmail(), "Social networking site email verification", emailMessage);
 
                 var jwtToken = jwtService.generateToken(user);
@@ -111,5 +122,66 @@ public class AuthenticationService {
                 repository.save(currentUser);
 
                 return new ChangePasswordResponse("Password changed successfully");
+        }
+
+        public ChangeFullnameResponse changeFullname(ChangeFullnameRequest request) {
+                // Retrieve the current user by email
+                Optional<User> currentUserOptional = repository.findByEmail(request.getEmail());
+
+                // Check if the user exists
+                if (!currentUserOptional.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "User does not exist");
+                }
+
+                // Get the user from the Optional
+                User currentUser = currentUserOptional.get();
+
+                // Update the user's full name
+                currentUser.setFullName(request.getNewFullname());
+
+                // Save the updated user
+                repository.save(currentUser);
+
+                // Create and return the response
+                return new ChangeFullnameResponse("Full name is updated successfully");
+        }
+
+        public String uploadProfileImage(String email, MultipartFile file) {
+                if (file.isEmpty()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Please select a file to upload");
+                }
+
+                try {
+                        // Save the file to the server
+                        String fileName = file.getOriginalFilename();
+                        String filePath = uploadDir + File.separator + fileName;
+                        file.transferTo(new File(filePath));
+
+                        // Build the URL for the uploaded image
+                        String fileUrl = ServletUriComponentsBuilder.fromCurrentContextPath()
+                                        .path("/images/")
+                                        .path(fileName)
+                                        .toUriString();
+
+                        // Update the profile image URL in the database for the user with the given
+                        // email
+                        updateUserProfileImage(email, fileUrl);
+
+                        return fileUrl;
+                } catch (IOException e) {
+                        throw new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR, "Failed to upload file");
+                }
+        }
+
+        private void updateUserProfileImage(String email, String profileImageUrl) {
+                Optional<User> userOptional = repository.findByEmail(email);
+                if (userOptional.isPresent()) {
+                        User user = userOptional.get();
+                        user.setProfileImage(profileImageUrl);
+                        repository.save(user);
+                } else {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                        "User with email " + email + " not found");
+                }
         }
 }

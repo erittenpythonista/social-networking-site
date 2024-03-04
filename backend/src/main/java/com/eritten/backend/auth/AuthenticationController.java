@@ -38,7 +38,7 @@ public class AuthenticationController {
     }
 
     @PostMapping("/change-fullname")
-    public ResponseEntity<ChangeFullnameResponse> changeEmail(@RequestBody ChangeFullnameRequest request) {
+    public ResponseEntity<ChangeFullnameResponse> changeFullname(@RequestBody ChangeFullnameRequest request) {
         return ResponseEntity.ok(service.changeFullname(request));
     }
 
@@ -50,7 +50,8 @@ public class AuthenticationController {
     }
 
     @PostMapping("/verify-code")
-    public ResponseEntity<> changeEmail(@RequestBody ChangeFullnameRequest request) {
-        return ResponseEntity.ok(service.changeFullname(request));
+    public ResponseEntity<AccountVerificationResponse> codeVerification(
+            @RequestBody AccountVerificationRequest request) {
+        return ResponseEntity.ok(service.accountVerification(request));
     }
 }

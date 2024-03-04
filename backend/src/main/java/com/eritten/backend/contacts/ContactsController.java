@@ -1,15 +1,23 @@
 package com.eritten.backend.contacts;
 
-import org.springframework.web.bind.annotation.RequestMapping;
+import java.util.List;
+
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
+import com.eritten.backend.models.Contact;
 
-@Data
+import lombok.AllArgsConstructor;
+
 @AllArgsConstructor
 @RestController
-@RequestMapping("/contacts")
 public class ContactsController {
+    private final ContactService contactService;
 
+    @GetMapping("/contacts")
+    public List<Contact> getContactsByEmail(@RequestParam String email) {
+        return contactService.getContactsByEmail(email);
+    }
+    
 }

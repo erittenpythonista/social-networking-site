@@ -1,9 +1,13 @@
 package com.eritten.backend.auth;
 
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.RequestBody;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
+
 import lombok.RequiredArgsConstructor;
 
 @RestController
@@ -34,14 +38,20 @@ public class AuthenticationController {
     }
 
     @PostMapping("/change-fullname")
-    public ResponseEntity<ChangeFullnameResponse> changeEmail(@RequestBody ChangeFullnameRequest request) {
+    public ResponseEntity<ChangeFullnameResponse> changeFullname(@RequestBody ChangeFullnameRequest request) {
         return ResponseEntity.ok(service.changeFullname(request));
     }
 
     @PostMapping("/upload-profile-image")
     public ResponseEntity<String> uploadProfileImage(@RequestParam("email") String email,
-                                                     @RequestParam("file") MultipartFile file) {
+            @RequestParam("file") MultipartFile file) {
         String imageUrl = service.uploadProfileImage(email, file);
         return ResponseEntity.ok(imageUrl);
+    }
+
+    @PostMapping("/verify-code")
+    public ResponseEntity<AccountVerificationResponse> codeVerification(
+            @RequestBody AccountVerificationRequest request) {
+        return ResponseEntity.ok(service.accountVerification(request));
     }
 }

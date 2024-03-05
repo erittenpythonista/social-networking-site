@@ -11,6 +11,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.eritten.backend.models.Contact;
+import com.eritten.backend.models.User;
 
 import lombok.AllArgsConstructor;
 
@@ -30,5 +31,16 @@ public class ContactsController {
     public ResponseEntity<ContactResponse> addContact(@RequestBody ContactRequest request) {
         ContactResponse response = contactService.addContact(request);
         return ResponseEntity.ok(response);
+    }
+
+    @PostMapping("/remove")
+    public ResponseEntity<ContactResponse> removeContact(@RequestBody ContactRequest request) {
+        ContactResponse response = contactService.removeContact(request);
+        return ResponseEntity.ok(response);
+    }
+
+    @GetMapping("/users")
+    public List<User> getAllUsers() {
+        return contactService.getAllUsers();
     }
 }

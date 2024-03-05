@@ -15,6 +15,11 @@ import lombok.AllArgsConstructor;
 public class ContactService {
     private final UserRepository userRepository;
 
+    public List<User> getAllUsers() {
+        // Retrieve all users from the database
+        return userRepository.findAll();
+    }
+
     public List<Contact> getContactsByEmail(String email) {
         // Find the user by email
         User user = userRepository.findByEmail(email)

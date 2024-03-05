@@ -27,8 +27,8 @@ public class ContactsController {
     }
 
     @PostMapping("/add")
-    public ResponseEntity<AddContactResponse> addContact(@RequestBody AddContactRequest request) {
-        AddContactResponse response = contactService.addContact(request);
+    public ResponseEntity<ContactResponse> addContact(@RequestBody ContactRequest request) {
+        ContactResponse response = contactService.addContact(request);
         return ResponseEntity.ok(response);
     }
 }

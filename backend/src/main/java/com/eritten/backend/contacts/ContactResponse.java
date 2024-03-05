@@ -6,7 +6,7 @@ import lombok.Data;
 @Data
 @AllArgsConstructor
 
-public class AddContactResponse {
+public class ContactResponse {
     private final String message;
 
 }

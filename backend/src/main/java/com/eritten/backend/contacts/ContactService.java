@@ -24,7 +24,7 @@ public class ContactService {
         return user.getContacts();
     }
 
-    public AddContactResponse addContact(AddContactRequest request) {
+    public ContactResponse addContact(ContactRequest request) {
         // Find the user by email
         User user = userRepository.findByEmail(request.getUserEmail())
                 .orElseThrow(() -> new RuntimeException("User not found"));
@@ -43,6 +43,23 @@ public class ContactService {
 
         // Save the user to update the contact list
         userRepository.save(user);
-        return new AddContactResponse("Contact added successfully");
+        return new ContactResponse("Contact added successfully");
+    }
+
+    public ContactResponse removeContact(ContactRequest request) {
+        // Find the user by email
+        User user = userRepository.findByEmail(request.getUserEmail())
+                .orElseThrow(() -> new RuntimeException("User not found"));
+
+        // Find the contact user by email
+        User contactUser = userRepository.findByEmail(request.getContactEmail())
+                .orElseThrow(() -> new RuntimeException("Contact user not found"));
+
+        // Find and remove the contact from the user's contact list
+        user.getContacts().removeIf(contact -> contact.getContactUser().equals(contactUser));
+
+        // Save the user to update the contact list
+        userRepository.save(user);
+        return new ContactResponse("Contact removed successfully");
     }
 }

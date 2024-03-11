@@ -47,7 +47,7 @@ public class User implements UserDetails {
     @Column(nullable = true)
     @Enumerated(EnumType.STRING)
     private Role role;
-    @Column(columnDefinition = "BIT DEFAULT false")
+    @Column(columnDefinition = "BOOLEAN DEFAULT false")
     private boolean verified;
     private String verificationCode;
 

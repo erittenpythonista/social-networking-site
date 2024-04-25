@@ -60,5 +60,10 @@ public class AuthenticationController {
         PasswordResetResponse response = service.passwordReset(request);
         return ResponseEntity.ok(response);
     }
+    @PostMapping("/change-reset-password")
+    public ResponseEntity<ChangeResetPasswordResponse> changePassword(@RequestBody ChangeResetPasswordRequest request) {
+        return ResponseEntity.ok(service.changeResetPassword(request));
+    }
+
 
 }

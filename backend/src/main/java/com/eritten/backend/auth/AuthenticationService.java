@@ -254,6 +254,22 @@ public class AuthenticationService {
                 // Return a response indicating that the verification code has been sent
                 return new PasswordResetResponse("Verification code sent successfully");
         }
+        public ChangeResetPasswordResponse changeResetPassword(ChangeResetPasswordRequest request) {
+                User currentUser = repository.findByEmail(request.getEmail())
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                                "User does not exist"));
+
+                if (!passwordEncoder.matches(request.getCurrentPassword(), currentUser.getPassword())) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Invalid current password");
+                }
+
+                String newPasswordEncoded = passwordEncoder.encode(request.getNewPassword());
+                currentUser.setPassword(newPasswordEncoded);
+                repository.save(currentUser);
+
+                return new ChangeResetPasswordResponse("Password changed successfully");
+        }
+
 
 
 

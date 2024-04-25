@@ -38,7 +38,7 @@ public class AuthenticationService {
         public AuthenticationResponse register(RegisterRequest request) {
                 final String verificationCode = verificationCodeGeneratorService.generateRandomCode(6);
                 final String fullname = request.getFullname();
-                final String emailMessage = "Subject: Email Verification for Signup on Our Social Networking Platform\n\n"
+                final String emailMessage = "Email Verification for Signup on Our Social Networking Platform\n\n"
                                 +
                                 "Dear " + fullname + ",\n\n" +
                                 "Thank you for choosing to sign up for our social networking platform. We are excited to have you join our community!\n\n"
@@ -54,6 +54,10 @@ public class AuthenticationService {
                                 +
                                 "Best regards,\n" +
                                 "Amalitech";
+                Optional<User> existingUserOptional = repository.findByEmail(request.getEmail());
+                if (existingUserOptional.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User already exists");
+                }
 
                 var user = User.builder()
                                 .fullName(request.getFullname())
@@ -74,15 +78,22 @@ public class AuthenticationService {
 
         public AuthenticationResponse authenticate(AuthenticationRequest request) {
                 authenticationManager
-                                .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
-                                                request.getPassword()));
+                        .authenticate(new UsernamePasswordAuthenticationToken(request.getEmail(),
+                                request.getPassword()));
                 var user = repository.findByEmail(request.getEmail())
-                                .orElseThrow();
+                        .orElseThrow(() -> new ResponseStatusException(HttpStatus.UNAUTHORIZED, "User not found"));
+
+                // Check if the user is verified
+                if (!user.isVerified()) {
+                        throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Account not verified");
+                }
+
                 var jwtToken = jwtService.generateToken(user);
                 return AuthenticationResponse.builder()
-                                .accessToken(jwtToken)
-                                .build();
+                        .accessToken(jwtToken)
+                        .build();
         }
+
 
         public ChangeEmailResponse changeEmail(ChangeEmailRequest request) {
                 // Retrieve the current user by email
@@ -208,5 +219,42 @@ public class AuthenticationService {
                         throw new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found");
                 }
         }
+
+        public PasswordResetResponse passwordReset(PasswordResetRequest request) {
+                final String verificationCode = verificationCodeGeneratorService.generateRandomCode(6);
+
+                final String message = "Dear " + request.getEmail() + ",\n" +
+                        "You recently requested to reset your password for your Social Networking Site account. To complete this process, please use the following verification code:\n" +
+                        "Verification Code: " + verificationCode + "\n" +
+                        "Please enter this code in the provided field to confirm your password reset request.\n" +
+                        "If you did not initiate this password reset, please disregard this message.\n" +
+                        "Thank you for using Social Networking Site,\n" +
+                        "Amalitech Team\n";
+
+                // Retrieve the current user by email
+                Optional<User> currentUserOptional = repository.findByEmail(request.getEmail());
+
+                // Check if the user exists
+                if (!currentUserOptional.isPresent()) {
+                        throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "A user with this email does not exist");
+                }
+
+                // Get the user from the Optional
+                User currentUser = currentUserOptional.get();
+
+                // Update the user's verification code
+                currentUser.setVerificationCode(verificationCode);
+
+                // Save the updated user
+                repository.save(currentUser);
+
+                // Send the password reset email
+                mailService.sendEmail(request.getEmail(), "Social Networking Site Password Reset Verification Code", message);
+
+                // Return a response indicating that the verification code has been sent
+                return new PasswordResetResponse("Verification code sent successfully");
+        }
+
+
 
 }

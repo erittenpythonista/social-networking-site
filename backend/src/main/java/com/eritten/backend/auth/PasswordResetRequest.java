@@ -1,2 +1,10 @@
-package com.eritten.backend.auth;public class PasswordResetRequest {
+package com.eritten.backend.auth;
+
+import lombok.AllArgsConstructor;
+import lombok.Data;
+
+@Data
+@AllArgsConstructor
+public class PasswordResetRequest {
+
 }

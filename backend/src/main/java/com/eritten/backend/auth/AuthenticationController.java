@@ -54,4 +54,11 @@ public class AuthenticationController {
             @RequestBody AccountVerificationRequest request) {
         return ResponseEntity.ok(service.accountVerification(request));
     }
+
+    @PostMapping("/reset-password")
+    public ResponseEntity<PasswordResetResponse> resetPassword(@RequestBody PasswordResetRequest request) {
+        PasswordResetResponse response = service.passwordReset(request);
+        return ResponseEntity.ok(response);
+    }
+
 }
